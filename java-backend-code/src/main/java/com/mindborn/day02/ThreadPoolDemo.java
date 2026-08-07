@@ -29,6 +29,16 @@ public class ThreadPoolDemo {
             });
         }
         //3. 关闭线程池
-        executor.shutdown();
+        executor.shutdown();//不再接收新任务，等待已提交的任务完成
+        try{
+            //等待最多六十秒，让所有任务执行完
+            if(!executor.awaitTermination(60,TimeUnit.SECONDS)){
+                executor.shutdownNow();
+            }
+        } catch (InterruptedException e){
+            //当前线程被中断，也强制关闭
+            executor.shutdownNow();
+        }
+        System.out.println("所有任务执行完毕，线程池已关闭");
     }
 }
