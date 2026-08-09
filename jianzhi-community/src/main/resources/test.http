@@ -1,0 +1,29 @@
+### 测试用户注册
+POST http://localhost:8080/register
+Content-Type: application/x-www-form-urlencoded
+
+username=lisi&password=***&nickname=李四
+
+### 测试用户登录
+POST http://localhost:8080/login
+Content-Type: application/x-www-form-urlencoded
+
+username=lisi&password=***
+
+### 发布文章
+POST http://localhost:8080/api/articles/publish
+Content-Type: application/x-www-form-urlencoded
+
+title=我的第一篇文章&content=这是文章内容，Hello World！&userId=1
+
+### 查询所有已发布文章
+GET http://localhost:8080/api/articles
+
+### 根据 ID 查询文章
+GET http://localhost:8080/api/articles/1
+
+### 查询某用户的文章
+GET http://localhost:8080/api/articles/user/1
+
+### 删除文章（软删除）
+DELETE http://localhost:8080/api/articles/1?userId=1
