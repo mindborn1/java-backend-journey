@@ -1,29 +1,42 @@
-### 测试用户注册
+### 注册
 POST http://localhost:8080/register
-Content-Type: application/x-www-form-urlencoded
+Content-Type: application/json
 
-username=lisi&password=***&nickname=李四
+{
+  "username": "zhangsan",
+  "password": "123456",
+  "nickname": "张三"
+}
 
-### 测试用户登录
+### 登录
 POST http://localhost:8080/login
-Content-Type: application/x-www-form-urlencoded
+Content-Type: application/json
 
-username=lisi&password=***
+{
+  "username": "zhangsan",
+  "password": "123456"
+}
 
-### 发布文章
-POST http://localhost:8080/api/articles/publish
-Content-Type: application/x-www-form-urlencoded
+### 注册 - 测试参数校验（用户名空）
+POST http://localhost:8080/register
+Content-Type: application/json
 
-title=我的第一篇文章&content=这是文章内容，Hello World！&userId=1
+{
+  "username": "",
+  "password": "123"
+}
 
-### 查询所有已发布文章
-GET http://localhost:8080/api/articles
+### 发表评论
+POST http://localhost:8080/api/comments?userId=1
+Content-Type: application/json
 
-### 根据 ID 查询文章
-GET http://localhost:8080/api/articles/1
+{
+  "articleId": 1,
+  "content": "这篇文章写得真好！"
+}
 
-### 查询某用户的文章
-GET http://localhost:8080/api/articles/user/1
+### 查询文章评论列表
+GET http://localhost:8080/api/comments/article/1
 
-### 删除文章（软删除）
-DELETE http://localhost:8080/api/articles/1?userId=1
+### 删除评论
+DELETE http://localhost:8080/api/comments/1?userId=1

@@ -1,5 +1,6 @@
 package com.mindborn.jianzhicommunity;
 
+import com.mindborn.jianzhicommunity.common.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,6 +10,10 @@ import java.util.List;
  * 文章控制器
  *
  * 提供文章的 HTTP 接口
+ *
+ * 改造点：
+ * 1. 所有方法返回值包成 Result<T>
+ * 2. 删除接口返回 Result.success() 而不是 String
  */
 @RestController
 @RequestMapping("/api/articles")
@@ -22,11 +27,12 @@ public class ArticleController {
      * POST /api/articles/publish
      */
     @PostMapping("/publish")
-    public Article publish(
+    public Result<Article> publish(
             @RequestParam String title,
             @RequestParam String content,
             @RequestParam Long userId) {
-        return articleService.publish(title, content, userId);
+        Article article = articleService.publish(title, content, userId);
+        return Result.success("发布成功", article);
     }
 
     /**
@@ -34,8 +40,9 @@ public class ArticleController {
      * GET /api/articles/{id}
      */
     @GetMapping("/{id}")
-    public Article getById(@PathVariable Long id) {
-        return articleService.getById(id);
+    public Result<Article> getById(@PathVariable Long id) {
+        Article article = articleService.getById(id);
+        return Result.success(article);
     }
 
     /**
@@ -43,8 +50,9 @@ public class ArticleController {
      * GET /api/articles/user/{userId}
      */
     @GetMapping("/user/{userId}")
-    public List<Article> listByUserId(@PathVariable Long userId) {
-        return articleService.listByUserId(userId);
+    public Result<List<Article>> listByUserId(@PathVariable Long userId) {
+        List<Article> list = articleService.listByUserId(userId);
+        return Result.success(list);
     }
 
     /**
@@ -52,8 +60,9 @@ public class ArticleController {
      * GET /api/articles
      */
     @GetMapping
-    public List<Article> listPublished() {
-        return articleService.listPublished();
+    public Result<List<Article>> listPublished() {
+        List<Article> list = articleService.listPublished();
+        return Result.success(list);
     }
 
     /**

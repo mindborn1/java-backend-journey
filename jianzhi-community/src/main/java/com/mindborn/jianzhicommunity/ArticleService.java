@@ -1,6 +1,7 @@
 package com.mindborn.jianzhicommunity;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.mindborn.jianzhicommunity.common.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,11 @@ import java.util.List;
  * 文章服务层
  *
  * 提供文章的增删改查功能
+ *
+ *  * 改造点：
+ *  * 1. RuntimeException → BusinessException
+ *  * 2. 方法参数更清晰
+ *
  */
 @Service
 public class ArticleService {
