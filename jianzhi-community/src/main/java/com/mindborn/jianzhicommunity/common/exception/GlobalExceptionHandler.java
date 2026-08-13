@@ -98,7 +98,7 @@ public class GlobalExceptionHandler {
      *
      * 为什么不能让前端看到真实错误？
      * 1. 暴露堆栈信息有安全风险（黑客能看到你的代码结构）
-     * 2. 用户看不懂 "NullPointerException at UserService.java:45"
+     * 2. 用户看不懂 "NullPointerException at UserServiceImpl.java:45"
      *
      * 所以返回一句友好的"系统繁忙"，同时后端 log.error 打印完整堆栈供排查
      */

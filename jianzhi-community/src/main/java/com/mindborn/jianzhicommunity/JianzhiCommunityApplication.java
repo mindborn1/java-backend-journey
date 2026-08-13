@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.mindborn.jianzhicommunity")
+@MapperScan("com.mindborn.jianzhicommunity.mapper")
 public class JianzhiCommunityApplication {
 
     public static void main(String[] args) {

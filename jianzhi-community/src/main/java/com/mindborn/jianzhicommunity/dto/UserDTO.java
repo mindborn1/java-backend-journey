@@ -1,4 +1,4 @@
-package com.mindborn.jianzhicommunity;
+package com.mindborn.jianzhicommunity.dto;
 
 import lombok.Data;
 

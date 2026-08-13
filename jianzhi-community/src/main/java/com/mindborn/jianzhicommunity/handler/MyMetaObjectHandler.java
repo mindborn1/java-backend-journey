@@ -1,4 +1,4 @@
-package com.mindborn.jianzhicommunity;
+package com.mindborn.jianzhicommunity.handler;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import org.apache.ibatis.reflection.MetaObject;
