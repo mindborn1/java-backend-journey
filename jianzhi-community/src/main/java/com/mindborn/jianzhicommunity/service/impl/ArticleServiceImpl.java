@@ -7,6 +7,7 @@ import com.mindborn.jianzhicommunity.mapper.ArticleMapper;
 import com.mindborn.jianzhicommunity.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.mindborn.jianzhicommunity.common.redis.RedisService;
 
 import java.util.List;
 
@@ -33,6 +34,16 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Autowired
     private ArticleMapper articleMapper;
+
+    @Autowired
+    private RedisService redisService;
+
+    /**
+     * 文章浏览量 Redis Key 前缀
+     * 格式：article:view:文章ID
+     */
+    private static final String ARTICLE_VIEW_KEY_PREFIX
+            = "article:view:";
 
     /**
      * 发布文章
@@ -63,20 +74,36 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     /**
-     * 根据 ID 查询文章
+     * 根据 ID 查询文章（带 Redis 实时浏览量）
      *
-     * selectById 是 BaseMapper 提供的方法，执行 SELECT * FROM article WHERE id = ?
+     * 流程：
+     *   1. 从数据库查出文章
+     *   2. Redis 中该文章的浏览量 +1（原子操作，线程安全）
+     *   3. 实时浏览量 = 数据库基础值 + Redis 增量
+     *   4. 返回文章（viewCount 是实时值）
      *
-     * 如果查不到（返回 null），抛 BusinessException，被全局异常处理器捕获，
-     * 前端收到 { "code": 400, "message": "文章不存在：xxx" }
+     * 为什么用 Redis 而不是直接写数据库？
+     *   - 用户每次看文章都写数据库，高并发时数据库压力太大
+     *   - Redis 是内存操作，速度快，支持高并发
+     *   - 定时任务每隔一段时间把 Redis 的增量同步回 MySQL 即可
      */
     @Override
     public Article getById(Long id) {
+        // 1. 从数据库查询文章
         Article article = articleMapper.selectById(id);
         if (article == null) {
-            // 用 BusinessException 而不是 RuntimeException，走统一异常处理
             throw new BusinessException("文章不存在：" + id);
         }
+
+        // 2. Redis 中浏览量 +1（如果 key 不存在，Redis 会自动创建并设为 1）
+        String viewKey = ARTICLE_VIEW_KEY_PREFIX + id;
+        Long redisIncrement = redisService.increment(viewKey);
+
+        // 3. 实时浏览量 = 数据库里的基础值 + Redis 记录的增量
+        //    viewCount 是 Integer，redisIncrement 是 Long，需要转换
+        int realViewCount = article.getViewCount() + redisIncrement.intValue();
+        article.setViewCount(realViewCount);
+
         return article;
     }
 

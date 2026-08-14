@@ -45,7 +45,12 @@
             <version>3.5.5</version>
         </dependency>
 
-        <!-- 测试依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+    <!-- 测试依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -69,6 +74,7 @@
             <artifactId>jjwt-api</artifactId>
             <version>0.12.6</version>
         </dependency>
+
         <dependency>
             <!-- JWT 具体实现 -->
             <groupId>io.jsonwebtoken</groupId>
@@ -76,6 +82,7 @@
             <version>0.12.6</version>
             <scope>runtime</scope>
         </dependency>
+
         <dependency>
             <!-- JWT 的 JSON 处理（基于 Jackson） -->
             <groupId>io.jsonwebtoken</groupId>
@@ -84,6 +91,7 @@
             <scope>runtime</scope>
         </dependency>
     </dependencies>
+
 
     <build>
         <plugins>

@@ -50,3 +50,7 @@ Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiI1IiwidXNlcm5hbWUiOiJ3YW5nd
 
 ### ========== 10. 不登录发布文章（应该返回 401） ==========
 POST http://localhost:8080/api/articles/publish?title=黑客入侵&content=没登录就想发文章
+
+### ========== 11.查询文章详情（触发Redis 浏览量 +1） ==========
+GET http://localhost:8080/api/articles/detail/1
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiI1IiwidXNlcm5hbWUiOiJ3YW5nd3UiLCJpYXQiOjE3ODY2MzAxNjYsImV4cCI6MTc4NzIzNDk2Nn0.mv-a6RlG1CX3B82iMCPfC4DEx54mUOZw7E7ew0cDa0ss-li4V8sIU0NOEk0vUSRE
