@@ -10,6 +10,7 @@ import com.mindborn.jianzhicommunity.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.Optional;
 
 /**
  * 用户服务实现类
@@ -104,30 +105,24 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public User login(UserLoginDTO dto) {
-        // ========== 步骤1：根据用户名查询 ==========
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("username", dto.getUsername());
-        // selectOne 返回单条记录，没有则返回 null
-        User user = userMapper.selectOne(queryWrapper);
+        // 步骤1：查询用户，不存在直接抛异常（Optional 一行搞定）
+        User user = Optional.ofNullable(
+                        userMapper.selectOne(
+                                new QueryWrapper<User>().eq("username", dto.getUsername())
+                        )
+                )
+                .orElseThrow(() -> new BusinessException("用户不存在：" + dto.getUsername()));
 
-        // ========== 步骤2：用户不存在 ==========
-        if (user == null) {
-            throw new BusinessException("用户不存在：" + dto.getUsername());
-        }
-
-        // ========== 步骤3：密码校验 ==========
-        // matches(前端传来的明文密码, 数据库里的哈希密码)
-        // BCrypt 会自动从哈希字符串里提取盐值，然后对明文进行相同运算，比较结果
+        // 步骤2：密码校验（两个参数，不适合 Optional，保持原样）
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new BusinessException("密码错误");
         }
 
-        // ========== 步骤4：检查账号状态 ==========
+        // 步骤3：状态检查
         if (user.getStatus() == 0) {
             throw new BusinessException("账号已被禁用");
         }
 
-        // ========== 步骤5：登录成功 ==========
         return user;
     }
 
@@ -144,5 +139,23 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getById(Long id) {
         return userMapper.selectById(id);
+    }
+
+    /**
+     * 【新增】根据 ID 查询用户，不存在抛业务异常
+     * Service 层内部调用，确保拿到有效用户
+     */
+    public User getUserById(Long id) {
+        return Optional.ofNullable(userMapper.selectById(id))
+                .orElseThrow(() -> new BusinessException("用户不存在，id=" + id));
+    }
+
+    /**
+     * 【新增】根据 ID 查询用户名，不存在返回"匿名用户"
+     */
+    public String getUserName(Long id) {
+        return Optional.ofNullable(userMapper.selectById(id))
+                .map(User::getUsername)
+                .orElse("匿名用户");
     }
 }
